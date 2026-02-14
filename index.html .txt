@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💌 A Question For You</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Georgia", serif;
+  background: linear-gradient(#fff0f5, #ffe4e1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  text-align: center;
+}
+
+.card {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  animation: fadeIn 1s ease;
+}
+
+input, button {
+  padding: 12px;
+  width: 100%;
+  margin-top: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+button {
+  background: #ff4d6d;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #e63950;
+}
+
+.hidden { display: none; }
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(10px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<audio id="music" loop>
+  <source src="https://files.catbox.moe/7l5n2p.mp3" type="audio/mpeg">
+</audio>
+
+<div class="card" id="limit">
+  <h2>You’ve reached the limit 💔</h2>
+  <p>Some moments are meant to be felt,<br>not replayed.</p>
+</div>
+
+<div class="card hidden" id="expired">
+  <h2>This link has expired 💔</h2>
+  <p>This moment has passed…<br>but the feelings haven’t.</p>
+</div>
+
+<div class="card hidden" id="gate">
+  <h2>Before you proceed…</h2>
+  <p>Besides my official name,<br>what’s the other nickname?</p>
+  <input type="text" id="nickname" placeholder="Enter it here">
+  <button onclick="checkNickname()">Continue</button>
+  <p id="error" style="color:red;"></p>
+</div>
+
+<div class="card hidden" id="valentine">
+  <h1>Salome 💖</h1>
+  <p>
+    Hey you. Yeah, you.<br><br>
+    I was wondering…<br>
+    would you do me the honor of being my Valentine?
+  </p>
+  <button onclick="yes()">Yes 💖</button>
+  <button onclick="yes()">Obviously 🙄❤️</button>
+</div>
+
+<div class="card hidden" id="yes">
+  <h1>💘 It’s Official</h1>
+  <p>February just got a whole lot better.</p>
+</div>
+
+<script>
+/* ---- OPEN LIMIT ---- */
+let opens = localStorage.getItem("opens") || 0;
+opens++;
+localStorage.setItem("opens", opens);
+
+const MAX_OPENS = 5;
+
+/* ---- FIRST VISIT TIME ---- */
+let firstVisit = localStorage.getItem("firstVisit");
+if (!firstVisit) {
+  firstVisit = new Date().toISOString();
+  localStorage.setItem("firstVisit", firstVisit);
+}
+
+const expiry = new Date(new Date(firstVisit).getTime() + 3*24*60*60*1000);
+
+/* ---- LOGIC ---- */
+document.querySelectorAll(".card").forEach(c => c.classList.add("hidden"));
+
+if (opens > MAX_OPENS) {
+  document.getElementById("limit").classList.remove("hidden");
+} else if (new Date() > expiry) {
+  document.getElementById("expired").classList.remove("hidden");
+} else {
+  document.getElementById("gate").classList.remove("hidden");
+}
+
+function checkNickname() {
+  const input = document.getElementById("nickname").value.trim().toUpperCase();
+  if (input === "BFEISS") {
+    document.getElementById("gate").classList.add("hidden");
+    document.getElementById("valentine").classList.remove("hidden");
+    document.getElementById("music").play();
+  } else {
+    document.getElementById("error").innerText = "Hmm… that doesn’t sound right 😉";
+  }
+}
+
+function yes() {
+  document.getElementById("valentine").classList.add("hidden");
+  document.getElementById("yes").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
